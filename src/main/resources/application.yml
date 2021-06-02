@@ -1,0 +1,82 @@
+#============================================================================
+# SERVER
+#============================================================================
+server :
+  port : 8080
+  servlet :
+    context-path : /sb-redis
+    servlet-path : /*
+  devtools :
+    restart :
+      enabled : true
+#============================================================================
+# SPRING
+#============================================================================
+spring:
+  cache:
+    type : redis
+  redis:
+#    cluster:
+  #    max-redirects: # Maximum number of redirects to follow when executing commands across the cluster.
+  #  cluster.nodes= # Comma-separated list of "host:port" pairs to bootstrap from.
+    database: 2 # Database index used by the connection factory.
+  #  url= # Connection URL. Overrides host, port, and password. User is ignored. Example: redis://user:password@example.com:6379
+    host: localhost # Redis server host.
+    port : 6379
+    password :
+#    sentinel :
+#      master :
+#      nodes :
+    ssl : false
+    timeout : 5000
+    jedis:
+      pool:
+        max-active: 8 # Maximum number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
+        max-idle: 8 # Maximum number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
+        max-wait: -1ms # Maximum amount of time a connection allocation should block before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
+        min-idle: 0 # Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
+  data:
+    redis:
+      repositories:
+        enabled: true
+
+  application:
+    name : sb-redis
+  datasource:
+    driver-class-name : com.mysql.cj.jdbc.Driver
+    url : jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=${db.auto-reconnect}&useSSL=${db.ssl}&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username : ${db.username}
+    password : ${db.password}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+      dialect : org.hibernate.dialect.MySQL5Dialect
+      ddl-auto : validate     # Hibernate ddl auto (create, create-drop, validate, update)
+
+#============================================================================
+# DATABASE
+#============================================================================
+db:
+  name : sb_redis
+  host : localhost
+  port : 3306
+  username : root
+  password :
+  auto-reconnect : true
+  ssl : false
+
+#============================================================================
+# LOGGER
+#============================================================================
+logging:
+  config: classpath:logback-spring.xml
+  file : ${log.file.path}
+  level:
+    com.infosys: DEBUG
+#============================================================================
+# LOG FILE
+#============================================================================
+log :
+  file :
+    path : /Workspace/Redis/log/sb-redis.log
